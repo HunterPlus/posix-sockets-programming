@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 		char	c[sizeof(short)];
 	} un;
 	
-	un.s = 0x0102;		/* s = 18 */
+	un.s = 0x0102;		/* s = 16^2 + 2 = 258 */
 	struct utsname  utsn;
 	
 	uname(&utsn);
