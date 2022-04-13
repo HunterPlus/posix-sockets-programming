@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include <socket.h>
+#include <string.h>
+#include <sys/socket.h>
 #include <arpa/inet.h>
 
 char *sock_ntop(const struct sockaddr *sa, socklen_t salen)
