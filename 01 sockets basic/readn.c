@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-size_t readn(int fd, void *buff, size_t n)
+ssize_t readn(int fd, void *buff, size_t n)
 {
         size_t  nleft;
         ssize_t nread;
