@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <sys/utsname.h>
 
 int main(int argc, char *argv[])
 {
@@ -8,7 +9,10 @@ int main(int argc, char *argv[])
 	} un;
 	
 	un.s = 0x0102;		/* s = 18 */
-	printf("%s: ", CPU_VENDOR_OS);
+	struct utsname  utsn;
+	
+	uname(&utsn);
+	printf("%s-%s-%s: ", utsn.machine, utsn.sysname, utsn.release);
 	if (sizeof(short) == 2) {
 		if (un.c[0] == 1 && un.c[1] == 2)
 			printf("big-endian.\n");
@@ -17,7 +21,7 @@ int main(int argc, char *argv[])
 		else
 			printf("unknown.\n");
 	} else
-		printf("sizeof(short) = %d\n", sizeof(short));
+		printf("sizeof(short) = %ld\n", sizeof(short));
 	
 	return 0;
 }
