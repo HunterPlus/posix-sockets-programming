@@ -20,6 +20,11 @@ char *sock_ntop(const struct sockaddr *sa, socklen_t salen)
 		}
 		return str;
 	}
+	case AF_INET6: {
+	}
+	default:
+		snprintf(str, sizeof(str), "sock_ntop: unknown AFxxx: %d, len %d", sa->sa_family, salen);
+		return str;
 	}
 	return NULL;
 }
