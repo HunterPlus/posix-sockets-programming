@@ -22,7 +22,7 @@ char *sock_ntop(const struct sockaddr *sa, socklen_t salen)
 		return str;
 	}
 	case AF_INET6: {
-		struct sockaddr_in6	*sin6 = (struct sockaddr_in6) sa6;
+		struct sockaddr_in6	*sin6 = (struct sockaddr_in6 *) sa;
 		
 		str[0] = '[';
 		if (inet_ntop(AF_INET6, &sin6->sin6_addr, str + 1, sizeof(str) - 1) == NULL)
