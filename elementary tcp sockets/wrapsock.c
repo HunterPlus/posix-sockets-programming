@@ -9,6 +9,8 @@ void Listen(int fd, int backlog)
 	if ((ptr = getenv("LISTENQ")) != NULL)
 		backlog = atoi(ptr);
 	
-	if (listen(fd, backlog) == -1) {			
+	if (listen(fd, backlog) == -1) {
+		fprintf("stderr, "listen error\n");
+		exit(1);
 	}
 }
