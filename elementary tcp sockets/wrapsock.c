@@ -10,7 +10,7 @@ void Listen(int fd, int backlog)
 		backlog = atoi(ptr);
 	
 	if (listen(fd, backlog) == -1) {
-		fprintf("stderr, "listen error\n");
+		fprintf(stderr, "listen error\n");
 		exit(1);
 	}
 }
