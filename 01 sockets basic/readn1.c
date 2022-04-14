@@ -12,5 +12,8 @@ int readn(int fd, void *buff, size_t n)
 		nleft -= nread;
 		bufp += nread;
 	}
+	
+	if (nread < 0)
+		return -1;
 	return n - nleft;
 }
