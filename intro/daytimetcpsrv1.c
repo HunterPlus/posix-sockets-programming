@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
                 }
 		printf("connect from %s, port %d\n", 
 		       inet_ntop(AF_INET, &cliaddr.sin_addr, buff, sizeof(buff)),
-		       ntohs(ccliaddr.sin_port));
+		       ntohs(cliaddr.sin_port));
 		
                 ticks = time(NULL);
                 snprintf(buff, sizeof(buff), "%.24s\r\n", ctime(&ticks));
