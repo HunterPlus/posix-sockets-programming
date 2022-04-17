@@ -121,8 +121,8 @@ Connect(int fd, const struct sockaddr *sa, socklen_t salen)
                 err_sys("connect error");
 }
 
-/* wrap unix *********************************************************************************************
- * <stdlib.h> <fcntl.h> <unistd.h>
+/* wrap unix/linux *********************************************************************************************
+ * <stdlib.h> <fcntl.h> <signal.h> <unistd.h>
 */
 void *
 Calloc(size_t n, size_t size)
@@ -185,7 +185,15 @@ Waitpid(pid_t pid, int *iptr, int options)
                 err_sys("waitpid error");
         return (retpid);
 }
+sighandler_t 
+Signal(int signum, sighandler_t handler)
+{
+        sighandler_t old;
 
+        if ((old = signal(signum, handler)) == SIG_ERR) 
+                err_sys("signal error");
+        return old;
+}
 ssize_t 
 Read(int fd, void *ptr, size_t nbytes)
 {
@@ -193,6 +201,37 @@ Read(int fd, void *ptr, size_t nbytes)
 
         if ((n = read(fd, ptr, nbytes)) == -1)
                 err_sys("read error");
+        return (n);
+}
+ssize_t
+readn(int fd, void *vptr, size_t n)
+{
+        size_t  nleft;
+        ssize_t nread;
+        char    *ptr;
+
+        ptr = vptr;
+        nleft = n;
+        while (nleft > 0) {
+                if ((nread = read(fd, ptr, nleft)) < 0) {
+                        if (errno == EINTR)
+                                nread = 0;      /* and call read() again */
+                        else   
+                                return (-1);
+                } else if (nread == 0)
+                        break;          /* EOF */
+                nleft -= nread;
+                ptr += nread;
+        }
+        return (n - nleft);
+}
+ssize_t
+Readn(int fd, void *ptr, size_t nbytes)
+{
+        ssize_t n;
+
+        if ((n = readn(fd, ptr, nbytes)) < 0)
+                err_sys("readn error");
         return (n);
 }
 static ssize_t 
