@@ -43,10 +43,10 @@ void str_cli(FILE *fp, int sockfd)
 			Fputs(recvline, stdout);
 		}
 		
-		if (FD_ISSET(fileno(fp), &rset) {	/* input is readable */
+		if (FD_ISSET(fileno(fp), &rset)) {	/* input is readable */
 			if (Fgets(sendline, MAXLINE, fp) == NULL)
 				return ;	/* all done */
 			Writen(sockfd, sendline, strlen(sendline));
 		}
-		    }  
+	}
 }
