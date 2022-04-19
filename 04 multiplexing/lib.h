@@ -34,6 +34,7 @@ void Listen(int fd, int backlog);
 int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr);
 void Connect(int fd, const struct sockaddr *sa, socklen_t salen);
 int Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+void Shutdown(int fd, int how);
 int Poll(struct pollfd *fds, nfds_t nfds, int timeout);
 
 /* wrap unix/linux ************************************************************

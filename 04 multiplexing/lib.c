@@ -128,6 +128,11 @@ Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct ti
                 err_sys("select error");
         return (n);
 }
+void 
+Shutdown(int fd, int how) {
+        if (shutdown(fd, how) < 0)
+                err_sys("shutdown error");
+}
 int 
 Poll(struct pollfd *fds, nfds_t nfds, int timeout) {
         int     n;
