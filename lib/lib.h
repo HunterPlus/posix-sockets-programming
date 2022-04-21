@@ -9,9 +9,12 @@
 #include <sys/wait.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/select.h>
+#include <poll.h>
 
 
 #define MAXLINE         1024
+#define max(a,b)        (((a) > (b)) ? (a) : (b))
 
 /* error ****************************************************************
  * <stdarg.h> <errorno.h> <string.h>
@@ -23,13 +26,20 @@ void err_msg(const char *fmt, ...);
 void err_quit(const char *fmt, ...);
 
 /* wrap socket ********************************************************* 
- * <sys/socket.h>
+ * <sys/socket.h> <sys/select.h> <poll.h>
 */
 int Socket(int family, int type, int protocol);
 void Bind(int fd, const struct sockaddr *sa, socklen_t salen);
 void Listen(int fd, int backlog);
 int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr);
 void Connect(int fd, const struct sockaddr *sa, socklen_t salen);
+int Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+void Shutdown(int fd, int how);
+int Poll(struct pollfd *fds, nfds_t nfds, int timeout);
+ssize_t Recvfrom(int fd, void *ptr, size_t nbytes, int flags, struct sockaddr *sa, socklen_t *salenptr);
+void Sendto(int fd, const void *ptr, size_t nbytes, int flags, const struct sockaddr *sa, socklen_t salen);
+void Getsockname(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+void Setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen);
 
 /* wrap unix/linux ************************************************************
  * <stdlib.h> <fcntl.h> <signal.h> <unistd.h>
@@ -61,7 +71,7 @@ void Writen(int fd, void *ptr, size_t nbytes);
  */
 const char *Inet_ntop(int family, const void *addrptr, char *strptr, size_t len);
 void Inet_pton(int family, const char *strptr, void *addrptr);
-
+char *Sock_ntop(const struct sockaddr *sa, socklen_t salen);
 /* wrap standard I/O *************************************************************
  * <stdio.h>
  */

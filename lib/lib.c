@@ -75,7 +75,7 @@ err_quit(const char *fmt, ...)
 }
 
 /* wrap socket ******************************************************************************************** 
- * <sys/socket.h>
+ * <sys/socket.h> <sys/select.h> <poll.h>
 */
 int 
 Socket(int family, int type, int protocol)
@@ -120,7 +120,54 @@ Connect(int fd, const struct sockaddr *sa, socklen_t salen)
         if (connect(fd, sa, salen) < 0)
                 err_sys("connect error");
 }
+int 
+Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout) {
+        int     n;
 
+        if ((n = select(nfds, readfds, writefds, exceptfds, timeout)) < 0)
+                err_sys("select error");
+        return (n);
+}
+void 
+Shutdown(int fd, int how) {
+        if (shutdown(fd, how) < 0)
+                err_sys("shutdown error");
+}
+int 
+Poll(struct pollfd *fds, nfds_t nfds, int timeout) {
+        int     n;
+
+        if ((n = poll(fds, nfds, timeout)) < 0) 
+                err_sys("poll error");
+        return (n);
+}
+ssize_t 
+Recvfrom(int fd, void *ptr, size_t nbytes, int flags, struct sockaddr *sa, socklen_t *salenptr)
+{
+        ssize_t         n;
+
+        if ((n = recvfrom(fd, ptr, nbytes, flags, sa, salenptr)) < 0)
+                err_sys("recvfrom error");
+        return (n);
+}
+void 
+Sendto(int fd, const void *ptr, size_t nbytes, int flags, const struct sockaddr *sa, socklen_t salen)
+{
+        if (sendto(fd, ptr, nbytes, flags, sa, salen) != nbytes)
+                err_sys("sendto error");
+}
+void 
+Getsockname(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
+{
+        if (getsockname(sockfd, addr, addrlen) < 0)
+                err_sys("getsockname error");      
+}
+void 
+Setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+{
+        if (setsockopt(fd, level, optname, optval, optlen) < 0)
+                err_sys("setsockopt error");
+}
 /* wrap unix/linux *********************************************************************************************
  * <stdlib.h> <fcntl.h> <signal.h> <unistd.h>
 */
@@ -343,6 +390,44 @@ Inet_pton(int family, const char *strptr, void *addrptr)
                 err_sys("inet_pton error for %s", strptr);      /* errno set */
         else if (n == 0)
                 err_quit("inet_pton error for %s", strptr);     /* errno not set */
+}
+char *
+Sock_ntop(const struct sockaddr *sa, socklen_t salen)
+{
+	uint16_t	port;
+	char		portstr[8];
+	static char	str[128];	/*  Unix domain is largest */
+	
+	switch (sa->sa_family) {
+	case AF_INET: {
+		struct sockaddr_in	*sin = (struct sockaddr_in *) sa;
+		
+		if (inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str)) == NULL)
+			return NULL;
+		if ((port = ntohs(sin->sin_port)) != 0) {
+			snprintf(portstr, sizeof(portstr), ":%d", port);
+			strcat(str, portstr);
+		}
+		return str;
+	}
+	case AF_INET6: {
+		struct sockaddr_in6	*sin6 = (struct sockaddr_in6 *) sa;
+		
+		str[0] = '[';
+		if (inet_ntop(AF_INET6, &sin6->sin6_addr, str + 1, sizeof(str) - 1) == NULL)
+			return NULL;
+		if ((port = ntohs(sin6->sin6_port)) != 0) {
+			snprintf(portstr, sizeof(portstr), "]:%d", port);
+			strcat(str, portstr);
+			return str;
+		}
+		return str + 1;
+	}
+	default:
+		snprintf(str, sizeof(str), "sock_ntop: unknown AFxxx: %d, len %d", sa->sa_family, salen);
+		return str;
+	}
+	return NULL;
 }
 
 /* wrap standard I/O *************************************************************
