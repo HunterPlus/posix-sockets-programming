@@ -168,6 +168,13 @@ Setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
         if (setsockopt(fd, level, optname, optval, optlen) < 0)
                 err_sys("setsockopt error");
 }
+void 
+Getpeername(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
+{
+        if (getpeername(sockfd, addr, addrlen) < 0)
+                err_sys("getpeername error");
+}
+
 /* wrap unix/linux *********************************************************************************************
  * <stdlib.h> <fcntl.h> <signal.h> <unistd.h>
 */

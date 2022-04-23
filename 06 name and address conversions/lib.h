@@ -40,6 +40,7 @@ ssize_t Recvfrom(int fd, void *ptr, size_t nbytes, int flags, struct sockaddr *s
 void Sendto(int fd, const void *ptr, size_t nbytes, int flags, const struct sockaddr *sa, socklen_t salen);
 void Getsockname(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 void Setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen);
+void Getpeername(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 
 /* wrap unix/linux ************************************************************
  * <stdlib.h> <fcntl.h> <signal.h> <unistd.h>
